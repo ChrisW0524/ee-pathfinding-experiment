@@ -7,6 +7,7 @@ import random
 from EnvironmentGeneration.MazeGeneration import generate_maze
 from EnvironmentGeneration.RandomGeneration import randomize_grid
 from PathfindingAlgorithms.Astar import a_star
+from PathfindingAlgorithms.GreedyBFS import greedy_bfs
 
 
 #Pygame setup
@@ -15,6 +16,7 @@ pygame.init()
 window = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE));
 pygame.display.set_caption("Pathfinding EE experiment")
 pygame.display.update();
+
 
 #Colors
 RED = (255, 0, 0) # Closed node
@@ -177,7 +179,7 @@ def reset_grid_colors(grid, start, end):
                 node.reset()
 
 def main(window, window_size):
-    ROWS = 100
+    ROWS = 25
     grid = make_grid(ROWS, window_size)
     
     start = grid[0][0]
@@ -209,6 +211,10 @@ def main(window, window_size):
                 if event.key == pygame.K_x:
                     reset_grid_colors(grid,start,end)
                     a_star(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    
+                if event.key == pygame.K_c:
+                    reset_grid_colors(grid,start,end)
+                    greedy_bfs(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
 
             if event.type == pygame.QUIT:
                 run = False
