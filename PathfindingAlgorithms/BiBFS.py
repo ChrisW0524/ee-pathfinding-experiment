@@ -1,17 +1,16 @@
 from queue import PriorityQueue
-from PathfindingAlgorithms.AlgorithmUtils import h, reconstruct_path
+from PathfindingAlgorithms.AlgorithmUtils import reconstruct_path
 
-def greedy_bfs(grid, start, end, draw):    
+def bi_bfs(grid, start, end, draw):
     count = 0
     open_set = PriorityQueue()
-    open_set.put((0, count, start))
+    open_set.put((count, start))
     
     #Keep track of where node came from (path):
     came_from = {}
-
+    
     while not open_set.empty():
-        
-        current = open_set.get()[2]
+        current = open_set.get()[1]
         
         #If the algorithm found a path to the end
         if current == end:
@@ -24,15 +23,15 @@ def greedy_bfs(grid, start, end, draw):
         for neighbor in neighbors:
             if(not neighbor.is_barrier()):
                 if neighbor not in came_from:
-                    count+=1
-                    open_set.put((h(neighbor.get_pos(), end.get_pos()),count, neighbor))
+                    count += 1
+                    open_set.put((count, neighbor))
                     came_from[neighbor] = current
                     if neighbor != start and neighbor != end:
                                 neighbor.make_open()
-                            
+                                
         draw()
         if current != start and current != end:
             current.make_closed()
-                        
-    #Path not found    
+            
+    #Path not found
     return None

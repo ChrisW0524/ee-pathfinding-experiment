@@ -1,13 +1,13 @@
 import pygame
-import sys
-import math
-import random
+from time import perf_counter
 
-#imports
+
+#import algorithms
 from EnvironmentGeneration.MazeGeneration import generate_maze
 from EnvironmentGeneration.RandomGeneration import randomize_grid
 from PathfindingAlgorithms.Astar import a_star
 from PathfindingAlgorithms.GreedyBFS import greedy_bfs
+from PathfindingAlgorithms.BiBFS import bi_bfs
 
 
 #Pygame setup
@@ -179,7 +179,7 @@ def reset_grid_colors(grid, start, end):
                 node.reset()
 
 def main(window, window_size):
-    ROWS = 25
+    ROWS = 20
     grid = make_grid(ROWS, window_size)
     
     start = grid[0][0]
@@ -210,11 +210,27 @@ def main(window, window_size):
                     generate_maze(grid, ROWS, start, end)
                 if event.key == pygame.K_x:
                     reset_grid_colors(grid,start,end)
-                    a_star(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    t_start = perf_counter()
+                    path_length = a_star(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    t_stop = perf_counter()
+                    print("Time elapsed: " + str(t_stop-t_start))
+                    print("Path length: " + str(path_length))
                     
                 if event.key == pygame.K_c:
                     reset_grid_colors(grid,start,end)
-                    greedy_bfs(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    t_start = perf_counter()
+                    path_length = greedy_bfs(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    t_stop = perf_counter()
+                    print("Time elapsed:" + str(t_stop-t_start))
+                    print("Path length: " + str(path_length))
+                    
+                if event.key == pygame.K_v:
+                    reset_grid_colors(grid,start,end)
+                    t_start= perf_counter()
+                    path_length = bi_bfs(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    t_stop = perf_counter()
+                    print("Time elapsed:" + str(t_stop-t_start))
+                    print("Path length: " + str(path_length))
 
             if event.type == pygame.QUIT:
                 run = False

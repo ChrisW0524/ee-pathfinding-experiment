@@ -1,6 +1,7 @@
 from queue import PriorityQueue
 from PathfindingAlgorithms.AlgorithmUtils import h, reconstruct_path
 
+
 def a_star(grid, start, end, draw):
     #Count keeps track of when node is inserted into the priority queue
     count = 0
@@ -31,8 +32,7 @@ def a_star(grid, start, end, draw):
         
         #If the algorithm found a path to the end
         if current == end:
-            reconstruct_path(came_from, start, end, lambda: draw())
-            return True
+            return reconstruct_path(came_from, start, end, lambda: draw())
         
         neighbors = current.get_neighbors(grid)
         
@@ -57,4 +57,4 @@ def a_star(grid, start, end, draw):
             current.make_closed()
         
     #Path not found    
-    return False
+    return None
