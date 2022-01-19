@@ -1,4 +1,6 @@
+from re import A
 import pygame
+import csv
 from time import perf_counter
 
 
@@ -29,6 +31,10 @@ PURPLE = (128, 0, 128) # Path node
 ORANGE = (255, 165 ,0) # Start node
 GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208) #End node    
+
+ROWS = 25
+DRAW_ANIMATION = True
+is_maze = False
 
 #node class
 class Node:
@@ -177,11 +183,31 @@ def reset_grid_colors(grid, start, end):
         for node in row:
             if(node != start and node != end and not node.is_barrier()):
                 node.reset()
+                
+def run_algorithm(grid, start, end, algorithm):
+    reset_grid_colors(grid,start,end)
+    path_length = None
+    while path_length is None:   
+        t_start = perf_counter()    
+        
+        if algorithm == "a_star":             
+            path_length = a_star(grid, start, end, lambda: draw(window, grid, ROWS, WINDOW_SIZE)) if DRAW_ANIMATION else a_star(grid, start, end, lambda: None)
+        if algorithm == "greedy_bfs":
+            path_length = greedy_bfs(grid, start, end, lambda: draw(window, grid, ROWS, WINDOW_SIZE)) if DRAW_ANIMATION else greedy_bfs(grid, start, end, lambda: None)
+        if algorithm == "bi_bfs":
+            path_length = bi_bfs(grid, start, end, lambda: draw(window, grid, ROWS, WINDOW_SIZE)) if DRAW_ANIMATION else bi_bfs(grid, start, end, lambda: None)
+        
+        if(path_length is None):
+            if(is_maze):
+                generate_maze(grid, ROWS, start, end)
+            else:
+                randomize_grid(grid, 0.25, start, end)
+                
+        t_stop = perf_counter()
+    
+    return (t_stop - t_start, path_length)
 
 def main(window, window_size):
-    ROWS = 20
-    DRAW_ANIMATION = True
-    
     grid = make_grid(ROWS, window_size)
     
     start = grid[0][0]
@@ -202,46 +228,25 @@ def main(window, window_size):
             #     print(node.get_pos())
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    reset_grid_colors(grid,start,end)
                     randomize_grid(grid, 0.25, start, end)
+                    is_maze = False
                 if event.key == pygame.K_z:
-                    reset_grid_colors(grid,start,end)
-                    for row in grid:
-                        for node in row:
-                            node.reset()
                     generate_maze(grid, ROWS, start, end)
+                    is_maze = True
                 if event.key == pygame.K_x:
-                    reset_grid_colors(grid,start,end)
-                    t_start = perf_counter()
-                    if(DRAW_ANIMATION):
-                        path_length = a_star(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
-                    else:
-                        path_length = a_star(grid, start, end, lambda: None)
-                    t_stop = perf_counter()
-                    print("Time elapsed: " + str(t_stop-t_start))
-                    print("Path length: " + str(path_length))
+                    result = run_algorithm(grid, start, end, "a_star")
+                    print("Time elapsed: " + str(result[0]))
+                    print("Path length: " + str(result[1]))
                     
                 if event.key == pygame.K_c:
-                    reset_grid_colors(grid,start,end)
-                    t_start = perf_counter()
-                    if(DRAW_ANIMATION):
-                        path_length = greedy_bfs(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
-                    else:
-                        path_length = greedy_bfs(grid, start, end, lambda: None)
-                    t_stop = perf_counter()
-                    print("Time elapsed:" + str(t_stop-t_start))
-                    print("Path length: " + str(path_length))
+                    result = run_algorithm(grid, start, end, "greedy_bfs")
+                    print("Time elapsed: " + str(result[0]))
+                    print("Path length: " + str(result[1]))
                     
                 if event.key == pygame.K_v:
-                    reset_grid_colors(grid,start,end)
-                    t_start= perf_counter()
-                    if(DRAW_ANIMATION):
-                        path_length = bi_bfs(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
-                    else:
-                        path_length = bi_bfs(grid, start, end, lambda: None)
-                    t_stop = perf_counter()
-                    print("Time elapsed:" + str(t_stop-t_start))
-                    print("Path length: " + str(path_length))
+                    result = run_algorithm(grid, start, end, "bi_bfs")
+                    print("Time elapsed: " + str(result[0]))
+                    print("Path length: " + str(result[1]))
 
             if event.type == pygame.QUIT:
                 run = False

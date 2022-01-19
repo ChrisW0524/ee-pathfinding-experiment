@@ -1,7 +1,6 @@
 from queue import PriorityQueue
 from PathfindingAlgorithms.AlgorithmUtils import h, reconstruct_path
 
-
 def a_star(grid, start, end, draw):
     #Count keeps track of when node is inserted into the priority queue
     count = 0

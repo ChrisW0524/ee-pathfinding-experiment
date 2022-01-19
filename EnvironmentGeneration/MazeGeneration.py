@@ -1,6 +1,12 @@
 import random
 
 def generate_maze(grid, grid_size, start, end):
+    
+    #Clear grid before generating maze
+    for row in grid:
+        for node in row:
+            node.reset()
+    
     start = grid[1][1]
     start.make_cell()
     walls = []
@@ -169,12 +175,9 @@ def generate_maze(grid, grid_size, start, end):
     for row in grid:
         for node in row:
             if(node.is_unvisited()):
-                node.make_barrier()
-                
-    for row in grid:
-        for node in row:
-            if(node.is_cell()):
-                node.reset()        
+                node.make_barrier()  
+            if((node != start and node != end and not node.is_barrier()) or node.is_cell()):
+                node.reset() 
                 
     
     start.make_start()
