@@ -180,6 +180,8 @@ def reset_grid_colors(grid, start, end):
 
 def main(window, window_size):
     ROWS = 20
+    DRAW_ANIMATION = True
+    
     grid = make_grid(ROWS, window_size)
     
     start = grid[0][0]
@@ -211,7 +213,10 @@ def main(window, window_size):
                 if event.key == pygame.K_x:
                     reset_grid_colors(grid,start,end)
                     t_start = perf_counter()
-                    path_length = a_star(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    if(DRAW_ANIMATION):
+                        path_length = a_star(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    else:
+                        path_length = a_star(grid, start, end, lambda: None)
                     t_stop = perf_counter()
                     print("Time elapsed: " + str(t_stop-t_start))
                     print("Path length: " + str(path_length))
@@ -219,7 +224,10 @@ def main(window, window_size):
                 if event.key == pygame.K_c:
                     reset_grid_colors(grid,start,end)
                     t_start = perf_counter()
-                    path_length = greedy_bfs(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    if(DRAW_ANIMATION):
+                        path_length = greedy_bfs(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    else:
+                        path_length = greedy_bfs(grid, start, end, lambda: None)
                     t_stop = perf_counter()
                     print("Time elapsed:" + str(t_stop-t_start))
                     print("Path length: " + str(path_length))
@@ -227,7 +235,10 @@ def main(window, window_size):
                 if event.key == pygame.K_v:
                     reset_grid_colors(grid,start,end)
                     t_start= perf_counter()
-                    path_length = bi_bfs(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    if(DRAW_ANIMATION):
+                        path_length = bi_bfs(grid, start, end, lambda: draw(window, grid, ROWS, window_size))
+                    else:
+                        path_length = bi_bfs(grid, start, end, lambda: None)
                     t_stop = perf_counter()
                     print("Time elapsed:" + str(t_stop-t_start))
                     print("Path length: " + str(path_length))
